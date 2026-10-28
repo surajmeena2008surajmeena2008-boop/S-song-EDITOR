@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Install check</title><link rel="manifest" href="./manifest.webmanifest">
+<style>body{font:16px/1.5 system-ui,sans-serif;background:#2a1450;color:#fff;margin:0;padding:20px}h1{font-size:20px}.r{padding:10px 12px;margin:8px 0;border-radius:12px;background:rgba(255,255,255,.1);word-break:break-all}.ok{border-left:6px solid #5be37d}.bad{border-left:6px solid #ff6b6b}button{font:inherit;padding:12px 18px;border-radius:12px;border:0;background:#fff;color:#2a1450;font-weight:700}</style></head><body>
+<h1>S-Song Editor: install check</h1><div id="o"></div><p><button id="ib" hidden>Install app</button></p>
+<script>
+const o=document.getElementById('o');const add=(ok,t)=>{const d=document.createElement('div');d.className='r '+(ok?'ok':'bad');d.textContent=(ok?'OK: ':'PROBLEM: ')+t;o.appendChild(d)};
+let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;const b=document.getElementById('ib');b.hidden=false;b.onclick=()=>dp.prompt();add(true,'Browser says this app CAN be installed. Tap Install app below.')});
+addEventListener('appinstalled',()=>add(true,'App installed'));
+(async()=>{
+ add(location.protocol==='https:'||location.hostname==='localhost','Page address is '+location.href);
+ add(true,'Running as installed app: '+matchMedia('(display-mode: standalone)').matches);
+ const l=document.querySelector('link[rel=manifest]');add(!!l,'Manifest link in index.html is '+(l?l.getAttribute('href'):'missing (open this page from the same folder as index.html)'));
+ try{const r=await fetch('./manifest.webmanifest',{cache:'no-store'});add(r.ok,'manifest.webmanifest status '+r.status+' ('+(r.headers.get('content-type')||'no type')+')');
+  if(r.ok){const m=await r.json();add(!!m.name&&!!m.start_url,'Manifest name: '+m.name+', start_url: '+m.start_url);
+   for(const ic of m.icons||[]){await new Promise(res=>{const i=new Image();i.onload=()=>{add(true,'Icon '+ic.src+' loads ('+i.naturalWidth+'x'+i.naturalHeight+')');res()};i.onerror=()=>{add(false,'Icon '+ic.src+' NOT found. Upload this file next to index.html');res()};i.src=new URL(ic.src,location.href).href})}}
+ }catch(e){add(false,'Could not read manifest.webmanifest: '+e.message)}
+ try{const r=await fetch('./sw.js',{cache:'no-store'});add(r.ok,'sw.js status '+r.status)}catch(e){add(false,'sw.js missing')}
+ if('serviceWorker' in navigator){const g=await navigator.serviceWorker.getRegistration('./');add(!!g,'Service worker '+(g?'registered ('+(g.active?g.active.state:'starting')+')':'not registered yet. Open the main page once, then reload this page'))}else add(false,'Service workers not supported in this browser');
+ setTimeout(()=>{if(!dp)add(false,'Browser has not offered install. Fix any PROBLEM above, then clear site data and reload')},2500);
+})();
+</script></body></html>

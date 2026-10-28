@@ -1,7 +1,7 @@
 /* S-Song Editor service worker: offline app shell + cached CDN libraries */
-const VER='ssong-v6',CORE=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/apple-touch-icon.png','./icons/icon.svg'],
+const VER='ssong-v7',CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./apple-touch-icon.png','./icon.svg'],
 CDN=['https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js','https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.7/jsmediatags.min.js'];
-self.addEventListener('install',e=>{e.waitUntil((async()=>{const c=await caches.open(VER);await c.addAll(CORE);
+self.addEventListener('install',e=>{e.waitUntil((async()=>{const c=await caches.open(VER);await Promise.all(CORE.map(u=>c.add(u).catch(()=>{})));
  await Promise.all(CDN.map(u=>fetch(u,{mode:'no-cors'}).then(r=>c.put(u,r)).catch(()=>{})))})().then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(n=>n!==VER).map(n=>caches.delete(n)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{

@@ -4,7 +4,7 @@ A static website package prepared for GitHub Pages.
 
 ## Publish on GitHub Pages
 1. Create a new GitHub repository named `sunny-song-editor`.
-2. Upload all files and folders from this ZIP to the repository root. Keep `index.html`, `manifest.webmanifest`, and the `icons` folder together.
+2. Upload all files from this ZIP to the repository root. Keep `index.html`, `manifest.webmanifest`, and the `icons` folder together.
 3. Open **Settings → Pages**.
 4. Under **Build and deployment**, choose **Deploy from a branch**, select `main` and `/(root)`, then save.
 5. Wait for the Pages deployment to finish and open the website URL shown in Settings → Pages.
@@ -23,3 +23,6 @@ A static website package prepared for GitHub Pages.
 - Local album art (the song's embedded cover) is shown in the player card.
 - The whole theme adapts to the album art with a smooth colour change. The palette button switches between "Match album art" and fixed colours.
 - Installable PWA: manifest, icons (including maskable), service worker and offline support.
+
+All files are in one flat folder (no sub-folders), so you can upload them straight from a phone.
+Open `check.html` on your site to see why the app can or cannot be installed.
